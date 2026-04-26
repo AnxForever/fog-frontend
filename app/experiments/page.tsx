@@ -52,7 +52,7 @@ export default async function ExperimentsPage() {
         <PhaseTimeline stage={data.status?.stage} />
       </section>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-[0.84fr_1.16fr]">
+      <div className="mt-8 grid gap-4 2xl:grid-cols-[0.8fr_1.2fr]">
         <section className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
@@ -64,39 +64,42 @@ export default async function ExperimentsPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
-              <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Pipeline</div>
-              <div className="mt-2 text-base font-semibold leading-7 text-foreground">{normalizeStage(data.status?.stage)}</div>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                {data.status?.pipeline_running ? "主流程正在运行。" : "当前未检测到主流程运行。"}
-              </p>
-            </div>
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
-              <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Progress</div>
-              <div className="mt-2 text-base font-semibold leading-7 text-foreground">
-                {data.status?.progress?.current && data.status?.progress?.total
-                  ? `${data.status.progress.current}/${data.status.progress.total}`
-                  : "n/a"}
+          <div className="space-y-3">
+            {[
+              {
+                label: "Pipeline",
+                value: normalizeStage(data.status?.stage),
+                description: data.status?.pipeline_running ? "主流程正在运行。" : "当前未检测到主流程运行。",
+              },
+              {
+                label: "Progress",
+                value:
+                  data.status?.progress?.current && data.status?.progress?.total
+                    ? `${data.status.progress.current}/${data.status.progress.total}`
+                    : "n/a",
+                description:
+                  typeof data.status?.progress?.percent === "number" ? `当前约 ${data.status.progress.percent}%` : "暂未写入结构化进度百分比。",
+              },
+              {
+                label: "磁盘空间",
+                value: typeof data.status?.disk?.free_gb === "number" ? `${data.status.disk.free_gb.toFixed(2)} GB` : "n/a",
+                description: "监控层会结合磁盘状态决定是否自动清理中间产物。",
+              },
+              {
+                label: "素材清单",
+                value: basename(data.latestManifestPath),
+                description: "最新论文素材清单会从 `paper_artifacts` 中自动挑最新一份。",
+              },
+            ].map((item) => (
+              <div key={item.label} className="home-mini-board-item rounded-[1.45rem]">
+                <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[linear-gradient(135deg,var(--chart-1),var(--chart-4))]" />
+                <div className="min-w-0">
+                  <div className="home-panel-caption">{item.label}</div>
+                  <div className="mt-1 break-words text-[1.06rem] font-semibold leading-7 text-foreground">{item.value}</div>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">{item.description}</p>
+                </div>
               </div>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                {typeof data.status?.progress?.percent === "number"
-                  ? `当前约 ${data.status.progress.percent}%`
-                  : "暂未写入结构化进度百分比。"}
-              </p>
-            </div>
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
-              <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">磁盘空间</div>
-              <div className="mt-2 text-base font-semibold leading-7 text-foreground">
-                {typeof data.status?.disk?.free_gb === "number" ? `${data.status.disk.free_gb.toFixed(2)} GB` : "n/a"}
-              </div>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">监控层会结合磁盘状态决定是否自动清理中间产物。</p>
-            </div>
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
-              <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">素材清单</div>
-              <div className="mt-2 text-base font-semibold leading-7 text-foreground">{basename(data.latestManifestPath)}</div>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">最新论文素材清单会从 `paper_artifacts` 中自动挑最新一份。</p>
-            </div>
+            ))}
           </div>
         </section>
 

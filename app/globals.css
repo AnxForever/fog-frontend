@@ -40,6 +40,7 @@
   --sidebar-ring: #2d8ba5;
   --motion-quick: cubic-bezier(0.34, 1.18, 0.64, 1);
   --motion-soft: cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-sidebar: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dark {
@@ -432,6 +433,92 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--chart-1) 40%, var(--border)), transparent);
   opacity: 0.75;
+}
+
+.sidebar-shell {
+  transition-property: width, border-color, background-color, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: var(--motion-sidebar);
+  will-change: width;
+}
+
+.sidebar-offset {
+  transition: padding-left 220ms var(--motion-sidebar);
+  will-change: padding-left;
+}
+
+.sidebar-copy {
+  overflow: hidden;
+  max-width: 11rem;
+  opacity: 1;
+  transform: translateX(0);
+  transform-origin: left center;
+  transition:
+    max-width 180ms var(--motion-sidebar),
+    opacity 120ms ease,
+    transform 180ms var(--motion-quick),
+    margin 180ms var(--motion-sidebar);
+}
+
+.sidebar-copy.is-collapsed {
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(4px);
+  pointer-events: none;
+}
+
+.sidebar-copy-vertical {
+  max-height: 8rem;
+  transition:
+    max-width 180ms var(--motion-sidebar),
+    max-height 180ms var(--motion-sidebar),
+    opacity 120ms ease,
+    transform 180ms var(--motion-quick),
+    margin 180ms var(--motion-sidebar);
+}
+
+.sidebar-copy-vertical.is-collapsed {
+  max-height: 0;
+  margin-top: 0;
+  transform: translateY(-2px);
+}
+
+.sidebar-nav-link {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 180ms var(--motion-soft),
+    border-color 180ms var(--motion-soft),
+    background-color 180ms var(--motion-soft),
+    color 180ms ease,
+    box-shadow 220ms var(--motion-soft);
+}
+
+.sidebar-nav-link::after {
+  content: "";
+  position: absolute;
+  inset: -18% -24%;
+  background: linear-gradient(
+    105deg,
+    transparent 12%,
+    color-mix(in srgb, white 28%, transparent) 26%,
+    transparent 42%
+  );
+  opacity: 0;
+  transform: translateX(-130%);
+  transition: opacity 200ms ease;
+  z-index: 0;
+}
+
+.sidebar-nav-link:hover::after,
+.sidebar-nav-link[aria-current="page"]::after {
+  opacity: 1;
+}
+
+.sidebar-nav-link > * {
+  position: relative;
+  z-index: 1;
 }
 
 .fog-grid {
