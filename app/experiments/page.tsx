@@ -20,6 +20,27 @@ function basename(input?: string | null) {
   return parts.at(-1) ?? input;
 }
 
+function cityLabel(city?: string) {
+  if (!city) return "未知城市";
+  const normalized = city.toLowerCase();
+  if (normalized === "frankfurt") return "法兰克福";
+  if (normalized === "munster") return "明斯特";
+  if (normalized === "lindau") return "林道";
+  return city;
+}
+
+function parseSampleMeta(sample: { output_path?: string | null; image_path?: string | null; beta?: string | number | null }) {
+  const raw = basename(sample.output_path ?? sample.image_path);
+  const stem = raw.replace(/\.[^.]+$/, "");
+  const match = stem.match(/^beta\d+_([a-z]+)_[a-z]+_(\d{6}_\d{6})_leftImg8bit_foggy_beta_(\d+(?:\.\d+)?)$/i);
+
+  return {
+    city: cityLabel(match?.[1]),
+    sceneId: match?.[2] ?? stem,
+    beta: String(sample.beta ?? match?.[3] ?? "n/a"),
+  };
+}
+
 export default async function ExperimentsPage() {
   const data = await loadDashboardData();
   const headers = data.summaryRows[0] ? Object.keys(data.summaryRows[0]) : [];
@@ -154,6 +175,7 @@ export default async function ExperimentsPage() {
           <div className="app-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {data.visualSamples.map((sample, index) => {
               const src = artifactSrc(sample.output_path ?? sample.image_path);
+              const meta = parseSampleMeta(sample);
               return (
                 <article key={`${sample.output_path ?? sample.image_path ?? index}`} className="thesis-surface rounded-[1.8rem] p-4">
                   <div className="mb-3 flex items-center justify-between gap-3">
@@ -161,7 +183,7 @@ export default async function ExperimentsPage() {
                       <Eye className="h-4 w-4" />
                       样本 {index + 1}
                     </div>
-                    <div className="thesis-badge">{sample.beta ?? "beta n/a"}</div>
+                    <div className="thesis-badge">雾浓度 {meta.beta}</div>
                   </div>
                   {src ? (
                     <img src={src} alt={`visual sample ${index + 1}`} className="h-56 w-full rounded-[1.2rem] border border-border/70 object-cover" />
@@ -170,7 +192,20 @@ export default async function ExperimentsPage() {
                       manifest 中未提供图片路径
                     </div>
                   )}
-                  <p className="mt-3 break-all text-xs leading-6 text-muted-foreground">{sample.output_path ?? sample.image_path ?? "n/a"}</p>
+                  <dl className="mt-4 grid gap-2 rounded-[1.2rem] border border-border/70 bg-background/72 p-3 text-sm">
+                    <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
+                      <dt className="text-muted-foreground">城市</dt>
+                      <dd className="text-right font-medium text-foreground">{meta.city}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
+                      <dt className="text-muted-foreground">样本编号</dt>
+                      <dd className="text-right font-mono text-[0.82rem] text-foreground">{meta.sceneId}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="text-muted-foreground">说明</dt>
+                      <dd className="text-right text-foreground">原图、叠加图、标注掩码与预测掩码对照</dd>
+                    </div>
+                  </dl>
                 </article>
               );
             })}
