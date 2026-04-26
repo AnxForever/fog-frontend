@@ -25,12 +25,20 @@ const demoSteps = [
   },
 ];
 
+const presentationPriorities = [
+  "先跑纯展示模式，确保答辩一定能讲。",
+  "如果她的 3050 本机环境顺利，再补本地单图推理模式。",
+  "不要把答辩成败压在现场临时装 CUDA / mmseg 上。",
+];
+
 export default async function DemoPage() {
   const [runtime, data] = await Promise.all([resolveDemoRuntime(), loadDashboardData()]);
   const runtimeLevel = runtime.device.startsWith("cuda") ? "本地推理可用" : "建议先用纯展示模式";
   const runtimeHint = runtime.device.startsWith("cuda")
     ? "如果是 3050 级别显卡，单图推理优先用 FP16，答辩演示通常够用。"
     : "如果她电脑环境配不好，也没关系，单靠已导出的样本图和结果表就能完整展示。";
+  const checkpointLabel = runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : "未找到";
+  const manifestLabel = data.latestManifestPath ?? "未找到 manifest";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
@@ -63,44 +71,90 @@ export default async function DemoPage() {
           description="如果她本地环境太差，或者 3050 那边临时装不好 Python / mmseg，这一块仍然可以直接展示已经导出的最终结果。"
         />
 
-        <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-          <div className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
-            <div className="space-y-4 text-sm leading-8 text-muted-foreground">
-              <p>
-                这套展示模式不依赖实时推理，只读取已经取回的 `retrieved_artifacts/`。也就是说，她哪怕只是普通 Windows 笔记本，只要能跑前端，就能把实验结果、最佳模型、可视化样本和汇总表完整讲清楚。
-              </p>
-              <div className="rounded-[1.35rem] border border-border/70 bg-background/82 p-4">
-                <div className="text-sm font-semibold text-foreground">建议给她的优先级</div>
-                <div className="mt-2">1. 先跑纯展示模式，确保答辩一定能讲。</div>
-                <div>2. 如果她的 3050 本机环境顺利，再补本地单图推理模式。</div>
-                <div>3. 不要把答辩成败压在现场临时装 CUDA / mmseg 上。</div>
-              </div>
-              <div className="rounded-[1.35rem] border border-border/70 bg-background/82 p-4">
-                <div className="text-sm font-semibold text-foreground">当前已取回的本地成果</div>
-                <div className="mt-2 break-all">最佳权重：{runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : "未找到"}</div>
-                <div>素材清单：{data.latestManifestPath ?? "未找到 manifest"}</div>
-                <div>可视化样本：{data.visualSamples.length} 张</div>
+        <div className="space-y-5">
+          <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+            <div className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
+              <div className="space-y-5 text-sm leading-8 text-muted-foreground">
+                <p className="max-w-3xl">
+                  这套展示模式不依赖实时推理，只读取已经取回的 `retrieved_artifacts/`。也就是说，她哪怕只是普通 Windows 笔记本，只要能跑前端，就能把实验结果、最佳模型、可视化样本和汇总表完整讲清楚。
+                </p>
+                <div className="grid gap-3 md:grid-cols-3">
+                  {presentationPriorities.map((item, index) => (
+                    <div key={item} className="rounded-[1.35rem] border border-border/70 bg-background/82 p-4">
+                      <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/70 bg-secondary/65 text-sm font-semibold text-foreground">
+                        {index + 1}
+                      </div>
+                      <p className="text-sm leading-7 text-foreground/88">{item}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+
+            <aside className="thesis-surface rounded-[2rem] p-5 md:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm font-semibold text-foreground">当前已取回的本地成果</div>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">把最关键的答辩素材单独收在这里，方便现场快速确认。</p>
+                </div>
+                <div className="thesis-badge">Presentation Ready</div>
+              </div>
+
+              <dl className="mt-5 space-y-3 text-sm">
+                <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
+                  <dt className="text-muted-foreground">最佳权重</dt>
+                  <dd className="mt-2 break-all font-medium text-foreground">{checkpointLabel}</dd>
+                </div>
+                <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
+                  <dt className="text-muted-foreground">素材清单</dt>
+                  <dd className="mt-2 break-all font-medium text-foreground">{manifestLabel}</dd>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
+                    <dt className="text-muted-foreground">可视化样本</dt>
+                    <dd className="mt-2 text-xl font-semibold text-foreground">{data.visualSamples.length} 张</dd>
+                  </div>
+                  <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
+                    <dt className="text-muted-foreground">推荐策略</dt>
+                    <dd className="mt-2 text-base font-semibold text-foreground">{runtimeLevel}</dd>
+                  </div>
+                </div>
+              </dl>
+            </aside>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {data.visualSamples.map((sample, index) => {
-              const src = sample.output_path ? `/api/artifact?path=${encodeURIComponent(sample.output_path)}` : null;
-              const meta = parseSampleMeta(sample);
-              return (
-                <VisualSampleCard
-                  key={`${sample.output_path ?? sample.image_path ?? index}`}
-                  index={index}
-                  src={src}
-                  city={meta.city}
-                  sceneId={meta.sceneId}
-                  beta={meta.beta}
-                  imageHeightClassName="h-52"
-                  roundedClassName="rounded-[1.6rem]"
-                />
-              );
-            })}
+          <div className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
+            <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h3 className="font-display-soft text-[1.18rem] font-semibold text-foreground">本地可视化样本画廊</h3>
+                <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
+                  这一排专门展示已经导出的分割结果。卡片放大后可以直接拿来讲样本差异，不需要再在文件夹里翻图。
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full border border-border/70 bg-background/80 px-3 py-1.5">样本数 {data.visualSamples.length}</span>
+                <span className="rounded-full border border-border/70 bg-background/80 px-3 py-1.5">{runtimeLevel}</span>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+              {data.visualSamples.map((sample, index) => {
+                const src = sample.output_path ? `/api/artifact?path=${encodeURIComponent(sample.output_path)}` : null;
+                const meta = parseSampleMeta(sample);
+                return (
+                  <VisualSampleCard
+                    key={`${sample.output_path ?? sample.image_path ?? index}`}
+                    index={index}
+                    src={src}
+                    city={meta.city}
+                    sceneId={meta.sceneId}
+                    beta={meta.beta}
+                    imageHeightClassName="h-60 md:h-64"
+                    roundedClassName="rounded-[1.7rem]"
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
