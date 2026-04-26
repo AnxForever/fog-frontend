@@ -86,17 +86,17 @@ export function VisualSampleCard({
 
         <dl className="mt-4 grid gap-2 rounded-[1.2rem] border border-border/70 bg-background/72 p-3 text-sm">
           <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
-            <dt className="text-muted-foreground">城市</dt>
-            <dd className="text-right font-medium text-foreground">{city}</dd>
+            <dt className="shrink-0 whitespace-nowrap text-muted-foreground">城市</dt>
+            <dd className="min-w-0 text-right font-medium text-foreground">{city}</dd>
           </div>
           <div className={note ? "flex items-start justify-between gap-3 border-b border-border/70 pb-2" : "flex items-start justify-between gap-3"}>
-            <dt className="text-muted-foreground">样本编号</dt>
-            <dd className="text-right font-mono text-[0.82rem] text-foreground">{sceneId}</dd>
+            <dt className="shrink-0 whitespace-nowrap text-muted-foreground">样本编号</dt>
+            <dd className="min-w-0 break-all text-right font-mono text-[0.82rem] text-foreground">{sceneId}</dd>
           </div>
           {note ? (
             <div className="flex items-start justify-between gap-3">
-              <dt className="text-muted-foreground">说明</dt>
-              <dd className="text-right text-foreground">{note}</dd>
+              <dt className="shrink-0 whitespace-nowrap text-muted-foreground">说明</dt>
+              <dd className="min-w-0 text-right text-foreground">{note}</dd>
             </div>
           ) : null}
         </dl>
