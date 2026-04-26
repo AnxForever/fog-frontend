@@ -27,10 +27,10 @@ export default async function ExperimentsPage() {
       />
 
       <div className="app-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="当前阶段" value={normalizeStage(data.status?.stage)} />
-        <MetricCard label="健康状态" value={data.status?.healthy ? "Healthy" : "Pending"} />
-        <MetricCard label="最佳预处理方案" value={data.bestVariant?.variant ?? "尚未选出"} />
-        <MetricCard label="最佳指标" value={data.bestVariant?.score ? `${data.bestVariant.score}` : "n/a"} hint={data.bestVariant?.metric} />
+        <MetricCard label="当前阶段" value={normalizeStage(data.status?.stage)} compact />
+        <MetricCard label="健康状态" value={data.status?.healthy ? "Healthy" : "Pending"} compact />
+        <MetricCard label="最佳预处理方案" value={data.bestVariant?.variant ?? "尚未选出"} compact />
+        <MetricCard label="最佳指标" value={data.bestVariant?.score ? `${data.bestVariant.score}` : "n/a"} hint={data.bestVariant?.metric} compact />
       </div>
 
       <div className="mt-8">
@@ -61,14 +61,14 @@ export default async function ExperimentsPage() {
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Pipeline</div>
-              <div className="mt-2 text-lg font-semibold text-foreground">{normalizeStage(data.status?.stage)}</div>
+              <div className="mt-2 text-base font-semibold leading-7 text-foreground">{normalizeStage(data.status?.stage)}</div>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 {data.status?.pipeline_running ? "主流程正在运行。" : "当前未检测到主流程运行。"}
               </p>
             </div>
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Progress</div>
-              <div className="mt-2 text-lg font-semibold text-foreground">
+              <div className="mt-2 text-base font-semibold leading-7 text-foreground">
                 {data.status?.progress?.current && data.status?.progress?.total
                   ? `${data.status.progress.current}/${data.status.progress.total}`
                   : "n/a"}
@@ -81,14 +81,14 @@ export default async function ExperimentsPage() {
             </div>
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">磁盘空间</div>
-              <div className="mt-2 text-lg font-semibold text-foreground">
+              <div className="mt-2 text-base font-semibold leading-7 text-foreground">
                 {typeof data.status?.disk?.free_gb === "number" ? `${data.status.disk.free_gb.toFixed(2)} GB` : "n/a"}
               </div>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">监控层会结合磁盘状态决定是否自动清理中间产物。</p>
             </div>
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">素材清单</div>
-              <div className="mt-2 text-sm font-medium text-foreground">{data.latestManifestPath ?? "尚未生成 manifest"}</div>
+              <div className="mt-2 break-all text-xs font-medium leading-6 text-foreground">{data.latestManifestPath ?? "尚未生成 manifest"}</div>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">最新论文素材清单会从 `paper_artifacts` 中自动挑最新一份。</p>
             </div>
           </div>
@@ -191,10 +191,10 @@ export default async function ExperimentsPage() {
             </div>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="状态文件" value="results/pipeline_status.json" className="rounded-[1.3rem]" />
-            <MetricCard label="最佳方案" value="results/best_variant.json" className="rounded-[1.3rem]" />
-            <MetricCard label="实验汇总" value="results/summary.csv" className="rounded-[1.3rem]" />
-            <MetricCard label="论文素材" value="results/paper_artifacts/*/manifest.json" className="rounded-[1.3rem]" />
+            <MetricCard label="状态文件" value="pipeline_status.json" hint="results/pipeline_status.json" className="rounded-[1.3rem]" compact />
+            <MetricCard label="最佳方案" value="best_variant.json" hint="results/best_variant.json" className="rounded-[1.3rem]" compact />
+            <MetricCard label="实验汇总" value="summary.csv" hint="results/summary.csv" className="rounded-[1.3rem]" compact />
+            <MetricCard label="论文素材" value="manifest.json" hint="results/paper_artifacts/*/manifest.json" className="rounded-[1.3rem]" compact />
           </div>
         </div>
       </section>

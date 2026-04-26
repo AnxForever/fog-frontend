@@ -68,7 +68,7 @@ export function DemoWorkbench({
           <div className="space-y-4">
             <div>
               <div className="fog-badge">Local Inference Workbench</div>
-              <h3 className="mt-3 text-xl font-semibold text-foreground">单图推理工作台</h3>
+              <h3 className="mt-3 font-display-soft text-[1.24rem] font-semibold text-foreground">单图推理工作台</h3>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 这里不依赖外部 iframe。前端会把上传图片提交到 `/api/demo/infer`，再由 Python 脚本调用你现有的模型推理逻辑生成结果。
               </p>
@@ -153,9 +153,9 @@ export function DemoWorkbench({
               {loading ? "正在推理" : "开始推理"}
             </button>
 
-            <div className="rounded-[1.3rem] border border-border/70 bg-background/78 p-4 text-xs leading-6 text-muted-foreground">
-              <div>Config: {defaultConfig}</div>
-              <div>Checkpoint: {defaultCheckpoint ?? "未找到"}</div>
+            <div className="rounded-[1.3rem] border border-border/70 bg-background/78 p-4 text-[11px] leading-6 text-muted-foreground md:text-xs">
+              <div className="break-all">Config: {defaultConfig}</div>
+              <div className="break-all">Checkpoint: {defaultCheckpoint ?? "未找到"}</div>
               <div>Device: {defaultDevice}</div>
               <div>Precision: {precision}</div>
               <div>{fp16Available ? "建议：3050 这类中低端显卡优先用 FP16 单图推理。" : "当前未检测到 CUDA，已自动回退到 CPU/FP32 展示模式。"}</div>
@@ -193,7 +193,7 @@ export function DemoWorkbench({
               { label: "Overlay", path: result.outputs.overlay },
             ].map((item) => (
               <div key={item.label} className="fog-card rounded-[1.6rem] p-4">
-                <div className="mb-3 text-sm font-medium text-foreground">{item.label}</div>
+                <div className="mb-3 text-[0.95rem] font-medium text-foreground">{item.label}</div>
                 <img src={artifactSrc(item.path)} alt={item.label} className="h-56 w-full rounded-[1.15rem] border border-border/70 object-cover" />
               </div>
             ))}

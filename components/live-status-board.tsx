@@ -109,7 +109,7 @@ export function LiveStatusBoard({
                 <Icon className="h-4 w-4 text-foreground/80" />
               </div>
               <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{card.label}</div>
-              <div className="mt-2 text-base font-semibold text-foreground">{cardValues[card.key]}</div>
+              <div className="mt-2 break-words text-[1.02rem] font-semibold leading-6 text-foreground">{cardValues[card.key]}</div>
             </div>
           );
         })}
@@ -121,7 +121,7 @@ export function LiveStatusBoard({
           当前进度
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <div className="text-xl font-semibold text-foreground">{progressLabel(data)}</div>
+          <div className="text-[1.18rem] font-semibold text-foreground">{progressLabel(data)}</div>
           <div className="fog-badge">{data.bestVariant?.variant ?? "variant 待定"}</div>
         </div>
         <p className="mt-3 text-sm leading-7 text-muted-foreground">

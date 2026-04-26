@@ -39,10 +39,10 @@ export default async function DemoPage() {
       />
 
       <div className="app-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="前端技术栈" value="Next.js 16" hint="App Router + Server Components" />
-        <MetricCard label="UI 技术" value="React 19" hint="Tailwind CSS 4 + next-themes" />
-        <MetricCard label="演示容器" value={demoUrl ? "已接入" : "待接入"} hint="支持 iframe 嵌入在线推理页" />
-        <MetricCard label="本机状态" value={runtimeLevel} hint={runtimeHint} />
+        <MetricCard label="前端技术栈" value="Next.js 16" hint="App Router + Server Components" compact />
+        <MetricCard label="UI 技术" value="React 19" hint="Tailwind CSS 4 + next-themes" compact />
+        <MetricCard label="演示容器" value={demoUrl ? "已接入" : "待接入"} hint="支持 iframe 嵌入在线推理页" compact />
+        <MetricCard label="本机状态" value={runtimeLevel} hint={runtimeHint} compact />
       </div>
 
       <section className="mt-8">
@@ -75,7 +75,7 @@ export default async function DemoPage() {
               </div>
               <div className="rounded-[1.35rem] border border-border/70 bg-background/82 p-4">
                 <div className="text-sm font-semibold text-foreground">当前已取回的本地成果</div>
-                <div className="mt-2">最佳权重：{runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : "未找到"}</div>
+                <div className="mt-2 break-all">最佳权重：{runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : "未找到"}</div>
                 <div>素材清单：{data.latestManifestPath ?? "未找到 manifest"}</div>
                 <div>可视化样本：{data.visualSamples.length} 张</div>
               </div>
