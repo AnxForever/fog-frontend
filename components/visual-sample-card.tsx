@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Eye, X } from "lucide-react";
+import { createPortal } from "react-dom";
 
 type VisualSampleCardProps = {
   index: number;
@@ -27,6 +28,11 @@ export function VisualSampleCard({
   roundedClassName = "rounded-[1.8rem]",
 }: VisualSampleCardProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -96,24 +102,27 @@ export function VisualSampleCard({
         </dl>
       </article>
 
-      {open && src ? (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(8,18,24,0.74)] px-4 py-6 backdrop-blur-sm" onClick={() => setOpen(false)}>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-black/28 text-white transition-colors hover:bg-black/44"
-            aria-label="关闭放大预览"
-          >
-            <X className="h-5 w-5" />
-          </button>
-          <div
-            className="w-full max-w-6xl rounded-[1.6rem] border border-white/12 bg-[rgba(9,20,26,0.52)] p-3 shadow-[0_24px_70px_rgba(0,0,0,0.34)]"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <img src={src} alt={`visual sample enlarged ${index + 1}`} className="max-h-[84vh] w-full rounded-[1.2rem] object-contain" />
-          </div>
-        </div>
-      ) : null}
+      {mounted && open && src
+        ? createPortal(
+            <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[rgba(8,18,24,0.82)] px-4 py-6 backdrop-blur-sm" onClick={() => setOpen(false)}>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-black/28 text-white transition-colors hover:bg-black/44"
+                aria-label="关闭放大预览"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div
+                className="w-full max-w-6xl rounded-[1.6rem] border border-white/12 bg-[rgba(9,20,26,0.52)] p-3 shadow-[0_24px_70px_rgba(0,0,0,0.34)]"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <img src={src} alt={`visual sample enlarged ${index + 1}`} className="max-h-[84vh] w-full rounded-[1.2rem] object-contain" />
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
