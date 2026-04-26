@@ -31,6 +31,9 @@ const precisions = [
 ];
 
 function artifactSrc(path: string) {
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
   return `/api/artifact?path=${encodeURIComponent(path)}`;
 }
 

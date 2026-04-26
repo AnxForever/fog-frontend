@@ -11,6 +11,8 @@ export const dynamic = "force-dynamic";
 const execFileAsync = promisify(execFile);
 const VALID_VARIANTS = new Set(["none", "clahe", "gamma", "retinex"]);
 const VALID_PRECISIONS = new Set(["fp32", "fp16"]);
+const EXTERNAL_API_BASE = process.env.FOG_API_BASE?.replace(/\/+$/, "");
+const EXTERNAL_API_TOKEN = process.env.FOG_API_TOKEN;
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -26,6 +28,22 @@ export async function POST(request: Request) {
   }
   if (!VALID_PRECISIONS.has(precision)) {
     return Response.json({ error: `不支持的精度模式：${precision}` }, { status: 400 });
+  }
+
+  if (EXTERNAL_API_BASE) {
+    const headers = new Headers();
+    if (EXTERNAL_API_TOKEN) {
+      headers.set("Authorization", `Bearer ${EXTERNAL_API_TOKEN}`);
+    }
+
+    const upstream = await fetch(`${EXTERNAL_API_BASE}/infer`, {
+      method: "POST",
+      headers,
+      body: form,
+    });
+
+    const payload = await upstream.json();
+    return Response.json(payload, { status: upstream.status });
   }
 
   const runtimeConfig = await resolveDemoRuntime();
