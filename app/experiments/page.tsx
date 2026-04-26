@@ -14,6 +14,12 @@ function normalizeStage(stage?: string) {
   return stage ?? "等待状态写入";
 }
 
+function basename(input?: string | null) {
+  if (!input) return "n/a";
+  const parts = input.split("/").filter(Boolean);
+  return parts.at(-1) ?? input;
+}
+
 export default async function ExperimentsPage() {
   const data = await loadDashboardData();
   const headers = data.summaryRows[0] ? Object.keys(data.summaryRows[0]) : [];
@@ -46,7 +52,7 @@ export default async function ExperimentsPage() {
         <PhaseTimeline stage={data.status?.stage} />
       </section>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="mt-8 grid gap-4 xl:grid-cols-[0.84fr_1.16fr]">
         <section className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
@@ -58,7 +64,7 @@ export default async function ExperimentsPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Pipeline</div>
               <div className="mt-2 text-base font-semibold leading-7 text-foreground">{normalizeStage(data.status?.stage)}</div>
@@ -88,7 +94,7 @@ export default async function ExperimentsPage() {
             </div>
             <div className="rounded-[1.5rem] border border-border/70 bg-background/88 p-4">
               <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">素材清单</div>
-              <div className="mt-2 break-all text-xs font-medium leading-6 text-foreground">{data.latestManifestPath ?? "尚未生成 manifest"}</div>
+              <div className="mt-2 text-base font-semibold leading-7 text-foreground">{basename(data.latestManifestPath)}</div>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">最新论文素材清单会从 `paper_artifacts` 中自动挑最新一份。</p>
             </div>
           </div>
@@ -107,7 +113,7 @@ export default async function ExperimentsPage() {
 
           {headers.length ? (
             <div className="overflow-x-auto">
-              <table className="thesis-table min-w-full">
+              <table className="thesis-table min-w-[920px]">
                 <thead>
                   <tr>
                     {headers.map((header) => (
