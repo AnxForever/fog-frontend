@@ -1,0 +1,6 @@
+experiment_name,checkpoint,config,aAcc,mIoU,mAcc
+segformer_b2_clahe_betaall_512x1024_s42_screen,checkpoints/segformer_b2_cityscapes.pth,/root/autodl-tmp/fog-seg-thesis/configs/experiments/segformer_b2_full.py,94.31999969482422,74.69999694824219,81.27999877929688
+segformer_b2_gamma_betaall_512x1024_s42_screen,checkpoints/segformer_b2_cityscapes.pth,/root/autodl-tmp/fog-seg-thesis/configs/experiments/segformer_b2_full.py,94.0,74.86000061035156,81.52999877929688
+segformer_b2_none_betaall_512x1024_s42_screen,checkpoints/segformer_b2_cityscapes.pth,/root/autodl-tmp/fog-seg-thesis/configs/experiments/segformer_b2_full.py,94.26000213623047,75.26000213623047,81.91000366210938
+segformer_b2_retinex_betaall_512x1024_s42_screen,checkpoints/segformer_b2_cityscapes.pth,/root/autodl-tmp/fog-seg-thesis/configs/experiments/segformer_b2_full.py,90.5,63.45000076293945,70.91999816894531
+segformer_b2_none_betaall_512x1024_s42_screen,checkpoints/segformer_b2_cityscapes.pth,94.26000213623047,75.26000213623047,81.91000366210938

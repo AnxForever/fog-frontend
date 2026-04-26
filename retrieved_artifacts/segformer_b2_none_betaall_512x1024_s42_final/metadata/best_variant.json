@@ -1,0 +1,13 @@
+{
+  "variant": "none",
+  "score": 75.26000213623047,
+  "metric": "mIoU",
+  "experiment_name": "segformer_b2_none_betaall_512x1024_s42_screen",
+  "checkpoint": "checkpoints/segformer_b2_cityscapes.pth",
+  "config": "/root/autodl-tmp/fog-seg-thesis/configs/experiments/segformer_b2_full.py",
+  "metrics": {
+    "aAcc": 94.26000213623047,
+    "mIoU": 75.26000213623047,
+    "mAcc": 81.91000366210938
+  }
+}

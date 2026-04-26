@@ -1,0 +1,55 @@
+{
+  "experiment_name": "segformer_b2_none_betaall_512x1024_s42_final",
+  "stage": "final",
+  "preprocess_variant": "none",
+  "fog_beta": "all",
+  "config": "configs/experiments/segformer_b2_full.py",
+  "checkpoint": "work_dirs/segformer_b2_none_betaall_512x1024_s42_final/best_mIoU_iter_21000.pth",
+  "artifact_dir": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final",
+  "copied_files": [
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/metrics/segformer_b2_none_betaall_512x1024_s42_screen.json",
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/summary.csv",
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/best_variant.json",
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/checkpoints.json",
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/work_dir/last_checkpoint",
+    "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/metadata/config/segformer_b2_full.py"
+  ],
+  "visual_samples": [
+    {
+      "beta": "0.005",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.005/leftImg8bit/val/frankfurt/frankfurt_000000_000294_leftImg8bit_foggy_beta_0.005.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.005/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta0005_frankfurt_frankfurt_000000_000294_leftImg8bit_foggy_beta_0.005.png"
+    },
+    {
+      "beta": "0.005",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.005/leftImg8bit/val/munster/munster_000173_000019_leftImg8bit_foggy_beta_0.005.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.005/gtFine/val/munster/munster_000173_000019_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta0005_munster_munster_000173_000019_leftImg8bit_foggy_beta_0.005.png"
+    },
+    {
+      "beta": "0.01",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.01/leftImg8bit/val/frankfurt/frankfurt_000000_000294_leftImg8bit_foggy_beta_0.01.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.01/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta001_frankfurt_frankfurt_000000_000294_leftImg8bit_foggy_beta_0.01.png"
+    },
+    {
+      "beta": "0.01",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.01/leftImg8bit/val/munster/munster_000173_000019_leftImg8bit_foggy_beta_0.01.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.01/gtFine/val/munster/munster_000173_000019_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta001_munster_munster_000173_000019_leftImg8bit_foggy_beta_0.01.png"
+    },
+    {
+      "beta": "0.02",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.02/leftImg8bit/val/frankfurt/frankfurt_000000_000294_leftImg8bit_foggy_beta_0.02.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.02/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta002_frankfurt_frankfurt_000000_000294_leftImg8bit_foggy_beta_0.02.png"
+    },
+    {
+      "beta": "0.02",
+      "image_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.02/leftImg8bit/val/munster/munster_000173_000019_leftImg8bit_foggy_beta_0.02.png",
+      "gt_path": "/root/autodl-tmp/fog-seg-thesis/data/raw/foggy_cityscapes/beta_0.02/gtFine/val/munster/munster_000173_000019_gtFine_labelTrainIds.png",
+      "output_path": "/root/autodl-tmp/fog-seg-thesis/results/paper_artifacts/segformer_b2_none_betaall_512x1024_s42_final/visuals/beta002_munster_munster_000173_000019_leftImg8bit_foggy_beta_0.02.png"
+    }
+  ]
+}

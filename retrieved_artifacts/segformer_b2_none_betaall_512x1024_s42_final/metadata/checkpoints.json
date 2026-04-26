@@ -1,0 +1,8 @@
+{
+  "segformer_b2_none_betaall_512x1024_s42_final": {
+    "checkpoint": "/root/autodl-tmp/fog-seg-thesis/work_dirs/segformer_b2_none_betaall_512x1024_s42_final/iter_24000.pth",
+    "meta": {
+      "config": "configs/experiments/segformer_b2_full.py"
+    }
+  }
+}

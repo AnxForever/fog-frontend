@@ -1,0 +1,97 @@
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.app-route-enter {
+  animation: fade-up 0.42s var(--motion-quick) both;
+}
+
+.app-section-enter {
+  animation: fade-up 0.52s var(--motion-soft) both;
+}
+
+.app-panel-enter {
+  animation: fade-up 0.6s var(--motion-soft) both;
+}
+
+.app-surface-enter {
+  animation: fade-up 0.48s var(--motion-quick) both;
+}
+
+.app-hover-lift {
+  transition:
+    transform 220ms var(--motion-quick),
+    box-shadow 220ms var(--motion-quick),
+    border-color 220ms ease;
+}
+
+.app-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.app-stagger > * {
+  animation: fade-up 0.5s var(--motion-soft) both;
+}
+
+.app-stagger > *:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.app-stagger > *:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.app-stagger > *:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+.app-stagger-tight > * {
+  animation: fade-up 0.42s var(--motion-soft) both;
+}
+
+.app-stagger-tight > *:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.app-stagger-tight > *:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.app-float-orb {
+  animation: drift 9s ease-in-out infinite;
+}
+
+.app-float-orb-delayed {
+  animation-delay: 1.6s;
+}
+
+.app-pulse-soft {
+  animation: pulse-soft 2.8s ease-in-out infinite;
+}
