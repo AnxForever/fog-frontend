@@ -1,9 +1,11 @@
-import { BarChart3, Eye, FileStack, Gauge, Sparkles } from "lucide-react";
+import { BarChart3, FileStack, Gauge, Sparkles } from "lucide-react";
 import { LiveStatusBoard } from "@/components/live-status-board";
 import { PhaseTimeline } from "@/components/phase-timeline";
 import { MetricCard } from "@/components/ui/metric-card";
+import { VisualSampleCard } from "@/components/visual-sample-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { loadDashboardData } from "@/lib/dashboard-data";
+import { basename, parseSampleMeta } from "@/lib/visual-sample-meta";
 
 function artifactSrc(path?: string) {
   if (!path) return null;
@@ -12,33 +14,6 @@ function artifactSrc(path?: string) {
 
 function normalizeStage(stage?: string) {
   return stage ?? "等待状态写入";
-}
-
-function basename(input?: string | null) {
-  if (!input) return "n/a";
-  const parts = input.split("/").filter(Boolean);
-  return parts.at(-1) ?? input;
-}
-
-function cityLabel(city?: string) {
-  if (!city) return "未知城市";
-  const normalized = city.toLowerCase();
-  if (normalized === "frankfurt") return "法兰克福";
-  if (normalized === "munster") return "明斯特";
-  if (normalized === "lindau") return "林道";
-  return city;
-}
-
-function parseSampleMeta(sample: { output_path?: string | null; image_path?: string | null; beta?: string | number | null }) {
-  const raw = basename(sample.output_path ?? sample.image_path);
-  const stem = raw.replace(/\.[^.]+$/, "");
-  const match = stem.match(/^beta\d+_([a-z]+)_[a-z]+_(\d{6}_\d{6})_leftImg8bit_foggy_beta_(\d+(?:\.\d+)?)$/i);
-
-  return {
-    city: cityLabel(match?.[1]),
-    sceneId: match?.[2] ?? stem,
-    beta: String(sample.beta ?? match?.[3] ?? "n/a"),
-  };
 }
 
 export default async function ExperimentsPage() {
@@ -177,36 +152,16 @@ export default async function ExperimentsPage() {
               const src = artifactSrc(sample.output_path ?? sample.image_path);
               const meta = parseSampleMeta(sample);
               return (
-                <article key={`${sample.output_path ?? sample.image_path ?? index}`} className="thesis-surface rounded-[1.8rem] p-4">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <Eye className="h-4 w-4" />
-                      样本 {index + 1}
-                    </div>
-                    <div className="thesis-badge">雾浓度 {meta.beta}</div>
-                  </div>
-                  {src ? (
-                    <img src={src} alt={`visual sample ${index + 1}`} className="h-56 w-full rounded-[1.2rem] border border-border/70 object-cover" />
-                  ) : (
-                    <div className="flex h-56 items-center justify-center rounded-[1.2rem] border border-dashed border-border/80 bg-muted/35 text-sm text-muted-foreground">
-                      manifest 中未提供图片路径
-                    </div>
-                  )}
-                  <dl className="mt-4 grid gap-2 rounded-[1.2rem] border border-border/70 bg-background/72 p-3 text-sm">
-                    <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
-                      <dt className="text-muted-foreground">城市</dt>
-                      <dd className="text-right font-medium text-foreground">{meta.city}</dd>
-                    </div>
-                    <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
-                      <dt className="text-muted-foreground">样本编号</dt>
-                      <dd className="text-right font-mono text-[0.82rem] text-foreground">{meta.sceneId}</dd>
-                    </div>
-                    <div className="flex items-start justify-between gap-3">
-                      <dt className="text-muted-foreground">说明</dt>
-                      <dd className="text-right text-foreground">原图、叠加图、标注掩码与预测掩码对照</dd>
-                    </div>
-                  </dl>
-                </article>
+                <VisualSampleCard
+                  key={`${sample.output_path ?? sample.image_path ?? index}`}
+                  index={index}
+                  src={src}
+                  city={meta.city}
+                  sceneId={meta.sceneId}
+                  beta={meta.beta}
+                  note="原图、叠加图、标注掩码与预测掩码对照"
+                  emptyText="manifest 中未提供图片路径"
+                />
               );
             })}
           </div>

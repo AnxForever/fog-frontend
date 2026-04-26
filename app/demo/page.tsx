@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ArrowUpRight, Bot, Cpu, Globe, Layers3, MonitorSmartphone, ServerCog, WandSparkles } from "lucide-react";
 import { DemoWorkbench } from "@/components/demo-workbench";
 import { MetricCard } from "@/components/ui/metric-card";
+import { VisualSampleCard } from "@/components/visual-sample-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { loadDashboardData } from "@/lib/dashboard-data";
 import { resolveDemoRuntime } from "@/lib/demo-runtime";
+import { parseSampleMeta } from "@/lib/visual-sample-meta";
 
 const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL;
 
@@ -22,33 +24,6 @@ const demoSteps = [
     description: "同时呈现原图、预处理图、语义分割图和叠加效果，更适合现场讲述效果差异。",
   },
 ];
-
-function basename(input?: string | null) {
-  if (!input) return "n/a";
-  const parts = input.split("/").filter(Boolean);
-  return parts.at(-1) ?? input;
-}
-
-function cityLabel(city?: string) {
-  if (!city) return "未知城市";
-  const normalized = city.toLowerCase();
-  if (normalized === "frankfurt") return "法兰克福";
-  if (normalized === "munster") return "明斯特";
-  if (normalized === "lindau") return "林道";
-  return city;
-}
-
-function parseSampleMeta(sample: { output_path?: string | null; image_path?: string | null; beta?: string | number | null }) {
-  const raw = basename(sample.output_path ?? sample.image_path);
-  const stem = raw.replace(/\.[^.]+$/, "");
-  const match = stem.match(/^beta\d+_([a-z]+)_[a-z]+_(\d{6}_\d{6})_leftImg8bit_foggy_beta_(\d+(?:\.\d+)?)$/i);
-
-  return {
-    city: cityLabel(match?.[1]),
-    sceneId: match?.[2] ?? stem,
-    beta: String(sample.beta ?? match?.[3] ?? "n/a"),
-  };
-}
 
 export default async function DemoPage() {
   const [runtime, data] = await Promise.all([resolveDemoRuntime(), loadDashboardData()]);
@@ -114,29 +89,16 @@ export default async function DemoPage() {
               const src = sample.output_path ? `/api/artifact?path=${encodeURIComponent(sample.output_path)}` : null;
               const meta = parseSampleMeta(sample);
               return (
-                <article key={`${sample.output_path ?? sample.image_path ?? index}`} className="thesis-surface rounded-[1.6rem] p-4">
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <div className="text-sm font-medium text-foreground">样本 {index + 1}</div>
-                    <div className="thesis-badge">雾浓度 {meta.beta}</div>
-                  </div>
-                  {src ? (
-                    <img src={src} alt={`visual sample ${index + 1}`} className="h-52 w-full rounded-[1.1rem] border border-border/70 object-cover" />
-                  ) : (
-                    <div className="flex h-52 items-center justify-center rounded-[1.1rem] border border-dashed border-border/70 bg-muted/35 text-sm text-muted-foreground">
-                      样本路径缺失
-                    </div>
-                  )}
-                  <dl className="mt-4 grid gap-2 rounded-[1.1rem] border border-border/70 bg-background/72 p-3 text-sm">
-                    <div className="flex items-start justify-between gap-3 border-b border-border/70 pb-2">
-                      <dt className="text-muted-foreground">城市</dt>
-                      <dd className="text-right font-medium text-foreground">{meta.city}</dd>
-                    </div>
-                    <div className="flex items-start justify-between gap-3">
-                      <dt className="text-muted-foreground">样本编号</dt>
-                      <dd className="text-right font-mono text-[0.82rem] text-foreground">{meta.sceneId}</dd>
-                    </div>
-                  </dl>
-                </article>
+                <VisualSampleCard
+                  key={`${sample.output_path ?? sample.image_path ?? index}`}
+                  index={index}
+                  src={src}
+                  city={meta.city}
+                  sceneId={meta.sceneId}
+                  beta={meta.beta}
+                  imageHeightClassName="h-52"
+                  roundedClassName="rounded-[1.6rem]"
+                />
               );
             })}
           </div>
