@@ -23,7 +23,6 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
     }
     return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "1";
   });
-  const [sidebarReady, setSidebarReady] = useState(() => typeof window !== "undefined");
   const desktopSidebarWidth = sidebarCollapsed ? "6rem" : "18rem";
 
   useLayoutEffect(() => {
@@ -31,23 +30,19 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
       return;
     }
     setSidebarCollapsed(window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "1");
-    setSidebarReady(true);
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !sidebarReady) {
+    if (typeof window === "undefined") {
       return;
     }
     window.localStorage.setItem(SIDEBAR_STORAGE_KEY, sidebarCollapsed ? "1" : "0");
-  }, [sidebarCollapsed, sidebarReady]);
+  }, [sidebarCollapsed]);
 
   return (
     <div className="min-h-screen bg-background text-foreground" style={{ "--desktop-sidebar-width": desktopSidebarWidth } as React.CSSProperties}>
       <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 hidden overflow-hidden border-r border-border/80 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--card)_94%,transparent),color-mix(in_srgb,var(--background)_88%,transparent))] backdrop-blur md:flex md:flex-col md:w-[var(--desktop-sidebar-width)]",
-          sidebarReady ? "sidebar-shell opacity-100" : "opacity-0",
-        )}
+        className="sidebar-shell fixed inset-y-0 left-0 z-40 hidden overflow-hidden border-r border-border/80 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--card)_94%,transparent),color-mix(in_srgb,var(--background)_88%,transparent))] backdrop-blur md:flex md:w-[var(--desktop-sidebar-width)] md:flex-col"
       >
         <div className="border-b border-border/80 px-5 py-5">
           <div className={cn("flex gap-3", sidebarCollapsed ? "flex-col items-center" : "items-start justify-between")}>
@@ -143,7 +138,7 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className={cn("min-h-screen pt-14 md:pt-0", sidebarReady ? "sidebar-offset md:pl-[var(--desktop-sidebar-width)]" : "md:pl-[var(--desktop-sidebar-width)]")}>
+      <main className="sidebar-offset min-h-screen pt-14 md:pl-[var(--desktop-sidebar-width)] md:pt-0">
         <div className="app-route-enter">{children}</div>
       </main>
     </div>
