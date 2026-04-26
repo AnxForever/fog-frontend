@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { ImagePlus, LoaderCircle, WandSparkles } from "lucide-react";
 
 type InferResponse = {
@@ -48,6 +48,7 @@ export function DemoWorkbench({
   defaultCheckpoint: string | null;
   defaultDevice: string;
 }) {
+  const fileInputId = useId();
   const [file, setFile] = useState<File | null>(null);
   const [variant, setVariant] = useState("none");
   const [precision, setPrecision] = useState(defaultDevice.startsWith("cuda") ? "fp16" : "fp32");
@@ -78,9 +79,10 @@ export function DemoWorkbench({
             </div>
 
             <div className="grid gap-3 md:grid-cols-3">
-              <label className="rounded-[1.3rem] border border-border/70 bg-background/82 p-4">
+              <div className="rounded-[1.3rem] border border-border/70 bg-background/82 p-4">
                 <div className="mb-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Upload</div>
                 <input
+                  id={fileInputId}
                   type="file"
                   accept="image/*"
                   onChange={(event) => {
@@ -89,9 +91,18 @@ export function DemoWorkbench({
                     setResult(null);
                     setError(null);
                   }}
-                  className="block w-full text-sm text-foreground file:mr-4 file:rounded-full file:border-0 file:bg-chart-1/10 file:px-4 file:py-2 file:text-sm file:font-medium file:text-chart-1"
+                  className="sr-only"
                 />
-              </label>
+                <div className="flex min-w-0 items-center gap-3">
+                  <label
+                    htmlFor={fileInputId}
+                    className="inline-flex shrink-0 cursor-pointer items-center rounded-full bg-chart-1/10 px-3 py-2 text-sm font-medium text-chart-1 transition-colors hover:bg-chart-1/16"
+                  >
+                    选择文件
+                  </label>
+                  <span className="min-w-0 truncate text-sm text-foreground/88">{file?.name ?? "未选择文件"}</span>
+                </div>
+              </div>
 
               <label className="rounded-[1.3rem] border border-border/70 bg-background/82 p-4">
                 <div className="mb-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Preprocess</div>
