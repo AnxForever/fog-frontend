@@ -5,20 +5,25 @@ type MetricCardProps = {
   value: string;
   hint?: string;
   className?: string;
+  compact?: boolean;
 };
 
-export function MetricCard({ label, value, hint, className }: MetricCardProps) {
+export function MetricCard({ label, value, hint, className, compact = false }: MetricCardProps) {
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-[1.65rem] border border-border/75 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--card)_94%,white_6%),color-mix(in_srgb,var(--background)_92%,var(--secondary)_8%))] p-4 shadow-[0_16px_34px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-[0_22px_50px_rgba(15,23,42,0.11)]",
+        "relative overflow-hidden rounded-[1.6rem] border border-border/70 bg-background/92 shadow-[0_12px_30px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(15,23,42,0.07)]",
+        compact ? "p-3.5" : "p-5",
         className,
       )}
     >
-      <div className="absolute inset-x-4 top-0 h-px bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--chart-1)_55%,var(--border)),transparent)]" />
-      <div className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
-      <div className="mt-3 text-[1.65rem] font-semibold tracking-[-0.04em] text-foreground md:text-[2rem]">{value}</div>
-      {hint ? <div className="mt-2 max-w-[24ch] text-xs leading-6 text-muted-foreground">{hint}</div> : null}
+      <div>
+        <div className={cn("mb-1 font-semibold tracking-tight text-foreground", compact ? "text-[1.18rem] md:text-[1.35rem]" : "text-3xl md:text-4xl lg:text-[2.6rem]")}>
+          {value}
+        </div>
+        <div className={cn("font-medium text-muted-foreground", compact ? "text-xs md:text-sm" : "text-sm md:text-base")}>{label}</div>
+        {hint ? <div className={cn("text-muted-foreground", compact ? "mt-0.5 text-[10px] md:text-xs" : "mt-1 text-xs md:text-sm")}>{hint}</div> : null}
+      </div>
     </div>
   );
 }
