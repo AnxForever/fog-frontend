@@ -31,13 +31,19 @@ const presentationPriorities = [
   "不要把答辩成败压在现场临时装 CUDA / mmseg 上。",
 ];
 
+function displayRuntimePath(value: string | null, repoRoot: string) {
+  if (!value) return null;
+  return value.startsWith(`${repoRoot}/`) ? value.replace(`${repoRoot}/`, "") : value;
+}
+
 export default async function DemoPage() {
   const [runtime, data] = await Promise.all([resolveDemoRuntime(), loadDashboardData()]);
   const runtimeLevel = runtime.device.startsWith("cuda") ? "本地推理可用" : "建议先用纯展示模式";
   const runtimeHint = runtime.device.startsWith("cuda")
     ? "如果是 3050 级别显卡，单图推理优先用 FP16，答辩演示通常够用。"
     : "如果她电脑环境配不好，也没关系，单靠已导出的样本图和结果表就能完整展示。";
-  const checkpointLabel = runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : "未找到";
+  const configLabel = displayRuntimePath(runtime.config, runtime.repoRoot) ?? "未知";
+  const checkpointLabel = displayRuntimePath(runtime.checkpoint, runtime.repoRoot) ?? "未找到";
   const manifestLabel = data.latestManifestPath ?? "未找到 manifest";
 
   return (
@@ -58,8 +64,8 @@ export default async function DemoPage() {
       <section className="mt-8">
         <DemoWorkbench
           runtimeReady={runtime.ready}
-          defaultConfig={runtime.config.replace(`${runtime.repoRoot}/`, "")}
-          defaultCheckpoint={runtime.checkpoint ? runtime.checkpoint.replace(`${runtime.repoRoot}/`, "") : null}
+          defaultConfig={configLabel}
+          defaultCheckpoint={checkpointLabel === "未找到" ? null : checkpointLabel}
           defaultDevice={runtime.device}
         />
       </section>
@@ -234,8 +240,10 @@ export default async function DemoPage() {
               你仓库里已经有 `src/demo/gradio_app.py` 和 `scripts/infer_demo.py`。后面要真跑演示，可以直接把它起到 7860 端口，再由这个页面内嵌或跳转。
             </p>
             <div className="thesis-code mt-4 rounded-[1.25rem]">
-              <div>python scripts/infer_demo.py \</div>
-              <div>  --config configs/experiments/segformer_b2_full.py \</div>
+              <div>python scripts/infer_demo.py \
+</div>
+              <div>  --config configs/experiments/segformer_b2_full.py \
+</div>
               <div>  --checkpoint work_dirs/xxx/best_mIoU_iter_xxx.pth</div>
             </div>
           </article>
