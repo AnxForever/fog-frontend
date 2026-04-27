@@ -145,6 +145,8 @@ const quickAnswers = [
     a: "因为训练已经结束，真正要交付给老师和同学看的，是结果、样本、结构化结论和可操作的演示入口。",
   },
 ];
+const FINAL_MODEL_NAME = "segformer_b2_none_betaall_512x1024_s42_final";
+const FINAL_RESULT_HINT = "slide + TTA · mIoU 80.42";
 
 export default async function HomePage() {
   const data = await loadDashboardData();
@@ -238,10 +240,11 @@ export default async function HomePage() {
                 <dl className="space-y-2.5 text-sm">
                   {[
                     { k: "最佳 Variant", v: data.bestVariant?.variant ?? "none" },
+                    { k: "最终模型", v: FINAL_MODEL_NAME },
                     { k: "主状态", v: statusText(status?.stage) },
                     { k: "Manifest", v: manifestText.split("/").at(-1) ?? manifestText },
                     { k: "可视化样本", v: `${data.visualSamples.length} 张` },
-                    { k: "展示模式", v: "已可独立运行" },
+                    { k: "最终成绩", v: FINAL_RESULT_HINT },
                     { k: "本地推理", v: "可后续接入" },
                   ].map((row) => (
                     <div key={row.k} className="flex items-start justify-between gap-3 border-b border-border/70 pb-2.5 last:border-0 last:pb-0">
