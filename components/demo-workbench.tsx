@@ -244,9 +244,9 @@ export function DemoWorkbench({
       ) : null}
 
       {activePreview ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/82 px-4 py-6 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/82 px-4 py-4 backdrop-blur-sm md:py-6">
           <button type="button" className="absolute inset-0" onClick={() => setActivePreview(null)} aria-label="关闭预览" />
-          <div className="relative z-[101] w-full max-w-6xl rounded-[1.8rem] border border-white/10 bg-slate-950/92 p-4 shadow-2xl">
+          <div className="relative z-[101] flex max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-slate-950/92 p-4 shadow-2xl md:max-h-[calc(100vh-3rem)]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="text-sm font-medium text-white">{activePreview.label}</div>
               <div className="flex items-center gap-2">
@@ -268,7 +268,13 @@ export function DemoWorkbench({
                 </button>
               </div>
             </div>
-            <img src={activePreview.src} alt={activePreview.label} className="max-h-[78vh] w-full rounded-[1.3rem] border border-white/10 object-contain" />
+            <div className="flex min-h-0 items-center justify-center overflow-hidden rounded-[1.3rem] border border-white/10 bg-black/18">
+              <img
+                src={activePreview.src}
+                alt={activePreview.label}
+                className="h-auto max-h-[calc(100vh-9rem)] w-auto max-w-full object-contain md:max-h-[calc(100vh-10rem)]"
+              />
+            </div>
           </div>
         </div>
       ) : null}
