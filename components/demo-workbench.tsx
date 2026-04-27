@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import { Download, ImagePlus, LoaderCircle, WandSparkles, X, ZoomIn } from "lucide-react";
+import { createPortal } from "react-dom";
 
 type InferResponse = {
   variant: string;
@@ -57,15 +58,31 @@ export function DemoWorkbench({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InferResponse | null>(null);
   const [activePreview, setActivePreview] = useState<{ label: string; src: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
   const fp16Available = defaultDevice.startsWith("cuda");
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (!activePreview) return;
+
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [activePreview]);
 
   return (
     <div className="space-y-4">
@@ -243,41 +260,40 @@ export function DemoWorkbench({
         </div>
       ) : null}
 
-      {activePreview ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/82 px-4 py-4 backdrop-blur-sm md:py-6">
-          <button type="button" className="absolute inset-0" onClick={() => setActivePreview(null)} aria-label="关闭预览" />
-          <div className="absolute left-4 top-4 z-[102] rounded-full border border-white/12 bg-slate-950/72 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur md:left-6 md:top-6">
-            {activePreview.label}
-          </div>
-          <div className="absolute right-4 top-4 z-[102] flex items-center gap-2 md:right-6 md:top-6">
-            <a
-              href={`${activePreview.src}${activePreview.src.includes("?") ? "&" : "?"}download=1`}
-              download
-              className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-slate-950/72 px-4 text-sm text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
-            >
-              <Download className="h-4 w-4" />
-              下载
-            </a>
-            <button
-              type="button"
-              onClick={() => setActivePreview(null)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-slate-950/72 text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
-              aria-label="关闭预览"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="relative z-[101] flex h-full w-full items-center justify-center">
-            <div className="flex items-center justify-center overflow-hidden">
+      {mounted && activePreview
+        ? createPortal(
+            <div className="fixed inset-0 z-[140] overflow-hidden bg-slate-950/82 backdrop-blur-sm">
+              <button type="button" className="absolute inset-0" onClick={() => setActivePreview(null)} aria-label="关闭预览" />
+              <div className="absolute left-4 top-4 z-[142] rounded-full border border-white/12 bg-slate-950/72 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur md:left-6 md:top-6">
+                {activePreview.label}
+              </div>
+              <div className="absolute right-4 top-4 z-[142] flex items-center gap-2 md:right-6 md:top-6">
+                <a
+                  href={`${activePreview.src}${activePreview.src.includes("?") ? "&" : "?"}download=1`}
+                  download
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-slate-950/72 px-4 text-sm text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
+                >
+                  <Download className="h-4 w-4" />
+                  下载
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActivePreview(null)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-slate-950/72 text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
+                  aria-label="关闭预览"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
               <img
                 src={activePreview.src}
                 alt={activePreview.label}
-                className="h-auto max-h-[calc(100vh-6rem)] w-auto max-w-[calc(100vw-2rem)] rounded-[1.3rem] border border-white/10 bg-black/18 object-contain shadow-2xl md:max-h-[calc(100vh-7rem)] md:max-w-[calc(100vw-4rem)]"
+                className="absolute left-1/2 top-1/2 z-[141] h-auto max-h-[calc(100dvh-6rem)] w-auto max-w-[calc(100dvw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-[1.3rem] border border-white/10 bg-black/18 object-contain shadow-2xl md:max-h-[calc(100dvh-7rem)] md:max-w-[calc(100dvw-4rem)]"
               />
-            </div>
-          </div>
-        </div>
-      ) : null}
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
