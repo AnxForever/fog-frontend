@@ -30,6 +30,8 @@ const precisions = [
   { value: "fp32", label: "FP32" },
   { value: "fp16", label: "FP16" },
 ];
+const FINAL_MODEL_NAME = "segformer_b2_none_betaall_512x1024_s42_final";
+const FINAL_MODEL_HINT = "SegFormer-B2 · none · all-beta · best_mIoU_iter_21000.pth";
 
 function artifactSrc(path: string) {
   return `/api/artifact?path=${encodeURIComponent(path)}`;
@@ -187,10 +189,12 @@ export function DemoWorkbench({
             </button>
 
             <div className="rounded-[1.3rem] border border-border/70 bg-background/78 p-4 text-[11px] leading-6 text-muted-foreground md:text-xs">
+              <div>Final Model: {FINAL_MODEL_NAME}</div>
               <div className="break-all">Config: {defaultConfig}</div>
               <div className="break-all">Checkpoint: {defaultCheckpoint ?? "未找到"}</div>
               <div>Device: {defaultDevice}</div>
               <div>Precision: {precision}</div>
+              <div>{FINAL_MODEL_HINT}</div>
               <div>{fp16Available ? "建议：3050 这类中低端显卡优先用 FP16 单图推理。" : "当前未检测到 CUDA，已自动回退到 CPU/FP32 展示模式。"}</div>
               {!runtimeReady ? <div className="mt-2 text-chart-3">当前还没有可用 checkpoint，接口会返回错误提示。</div> : null}
             </div>
