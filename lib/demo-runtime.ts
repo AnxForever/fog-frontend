@@ -10,6 +10,7 @@ const ROOT_CANDIDATES = [APP_ROOT, path.resolve(APP_ROOT, "..")];
 const execFileAsync = promisify(execFile);
 const EXTERNAL_API_BASE = process.env.FOG_API_BASE?.replace(/\/+$/, "");
 const EXTERNAL_API_TOKEN = process.env.FOG_API_TOKEN;
+const FINAL_CHECKPOINT_RELATIVE = path.join("retrieved_artifacts", "best_mIoU_iter_21000.pth");
 
 type ExternalRuntimeResponse = {
   ready?: boolean;
@@ -28,6 +29,11 @@ async function pathExists(target: string) {
 }
 
 async function findLatestCheckpoint() {
+  for (const root of ROOT_CANDIDATES) {
+    const pinnedFinal = path.join(root, FINAL_CHECKPOINT_RELATIVE);
+    if (await pathExists(pinnedFinal)) return pinnedFinal;
+  }
+
   const roots = ROOT_CANDIDATES.flatMap((root) => [path.join(root, "retrieved_artifacts"), path.join(root, "work_dirs")]);
   for (const workRoot of roots) {
     try {
@@ -59,10 +65,6 @@ async function findLatestCheckpoint() {
     } catch {
       continue;
     }
-  }
-  for (const root of ROOT_CANDIDATES) {
-    const flatRetrieved = path.join(root, "retrieved_artifacts", "best_mIoU_iter_21000.pth");
-    if (await pathExists(flatRetrieved)) return flatRetrieved;
   }
   return null;
 }
