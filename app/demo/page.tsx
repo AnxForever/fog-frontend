@@ -8,6 +8,8 @@ import { loadDashboardData } from "@/lib/dashboard-data";
 import { resolveDemoRuntime } from "@/lib/demo-runtime";
 import { parseSampleMeta } from "@/lib/visual-sample-meta";
 
+export const dynamic = "force-dynamic";
+
 const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL;
 
 const demoSteps = [
