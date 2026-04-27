@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState } from "react";
-import { ImagePlus, LoaderCircle, WandSparkles } from "lucide-react";
+import { Download, ImagePlus, LoaderCircle, WandSparkles, X, ZoomIn } from "lucide-react";
 
 type InferResponse = {
   variant: string;
@@ -31,10 +31,11 @@ const precisions = [
 ];
 
 function artifactSrc(path: string) {
-  if (/^https?:\/\//i.test(path)) {
-    return path;
-  }
   return `/api/artifact?path=${encodeURIComponent(path)}`;
+}
+
+function artifactDownloadHref(path: string) {
+  return `/api/artifact?path=${encodeURIComponent(path)}&download=1`;
 }
 
 export function DemoWorkbench({
@@ -55,6 +56,7 @@ export function DemoWorkbench({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InferResponse | null>(null);
+  const [activePreview, setActivePreview] = useState<{ label: string; src: string } | null>(null);
   const fp16Available = defaultDevice.startsWith("cuda");
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
@@ -207,10 +209,66 @@ export function DemoWorkbench({
               { label: "Overlay", path: result.outputs.overlay },
             ].map((item) => (
               <div key={item.label} className="fog-card rounded-[1.6rem] p-4">
-                <div className="mb-3 text-[0.95rem] font-medium text-foreground">{item.label}</div>
-                <img src={artifactSrc(item.path)} alt={item.label} className="h-56 w-full rounded-[1.15rem] border border-border/70 object-cover" />
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="text-[0.95rem] font-medium text-foreground">{item.label}</div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActivePreview({ label: item.label, src: artifactSrc(item.path) })}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-background/88 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label={`放大查看${item.label}`}
+                    >
+                      <ZoomIn className="h-4 w-4" />
+                    </button>
+                    <a
+                      href={artifactDownloadHref(item.path)}
+                      download
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-background/88 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label={`下载${item.label}`}
+                    >
+                      <Download className="h-4 w-4" />
+                    </a>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActivePreview({ label: item.label, src: artifactSrc(item.path) })}
+                  className="block w-full"
+                >
+                  <img src={artifactSrc(item.path)} alt={item.label} className="h-56 w-full rounded-[1.15rem] border border-border/70 object-cover" />
+                </button>
               </div>
             ))}
+          </div>
+        </div>
+      ) : null}
+
+      {activePreview ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/82 px-4 py-6 backdrop-blur-sm">
+          <button type="button" className="absolute inset-0" onClick={() => setActivePreview(null)} aria-label="关闭预览" />
+          <div className="relative z-[101] w-full max-w-6xl rounded-[1.8rem] border border-white/10 bg-slate-950/92 p-4 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="text-sm font-medium text-white">{activePreview.label}</div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`${activePreview.src}${activePreview.src.includes("?") ? "&" : "?"}download=1`}
+                  download
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-white/6 px-4 text-sm text-white transition-colors hover:bg-white/12"
+                >
+                  <Download className="h-4 w-4" />
+                  下载
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActivePreview(null)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition-colors hover:bg-white/12"
+                  aria-label="关闭预览"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <img src={activePreview.src} alt={activePreview.label} className="max-h-[78vh] w-full rounded-[1.3rem] border border-white/10 object-contain" />
           </div>
         </div>
       ) : null}
