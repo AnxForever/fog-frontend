@@ -8,6 +8,15 @@ import { promisify } from "node:util";
 const APP_ROOT = process.cwd();
 const ROOT_CANDIDATES = [APP_ROOT, path.resolve(APP_ROOT, "..")];
 const execFileAsync = promisify(execFile);
+const EXTERNAL_API_BASE = process.env.FOG_API_BASE?.replace(/\/+$/, "");
+const EXTERNAL_API_TOKEN = process.env.FOG_API_TOKEN;
+
+type ExternalRuntimeResponse = {
+  ready?: boolean;
+  device?: string;
+  config?: string;
+  checkpoint?: string | null;
+};
 
 async function pathExists(target: string) {
   try {
@@ -80,7 +89,41 @@ async function findExistingPath(candidates: string[]) {
   return null;
 }
 
+async function resolveExternalDemoRuntime() {
+  if (!EXTERNAL_API_BASE) return null;
+
+  const headers = new Headers();
+  if (EXTERNAL_API_TOKEN) {
+    headers.set("Authorization", `Bearer ${EXTERNAL_API_TOKEN}`);
+  }
+
+  try {
+    const response = await fetch(`${EXTERNAL_API_BASE}/runtime`, {
+      headers,
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+
+    const payload = (await response.json()) as ExternalRuntimeResponse;
+    return {
+      repoRoot: APP_ROOT,
+      pythonBin: "remote",
+      device: payload.device || "cpu",
+      config: payload.config || "unknown",
+      checkpoint: payload.checkpoint ?? null,
+      ready: Boolean(payload.ready && payload.config && payload.checkpoint),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function resolveDemoRuntime() {
+  const externalRuntime = await resolveExternalDemoRuntime();
+  if (externalRuntime) {
+    return externalRuntime;
+  }
+
   const pythonBin = process.env.FOG_SEG_DEMO_PYTHON || "python3";
   const defaultConfig = await findExistingPath(
     ROOT_CANDIDATES.map((root) => path.join(root, "configs", "experiments", "segformer_b2_full.py")),
