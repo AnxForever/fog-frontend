@@ -11,6 +11,8 @@ import { parseSampleMeta } from "@/lib/visual-sample-meta";
 export const dynamic = "force-dynamic";
 
 const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL;
+const FINAL_MODEL_NAME = "segformer_b2_none_betaall_512x1024_s42_final";
+const FINAL_MODEL_SCORE = "slide + TTA · mIoU 80.42";
 
 const presentationPriorities = [
   "先跑纯展示模式，确保答辩一定能讲。",
@@ -59,11 +61,13 @@ export default async function DemoPage() {
         description="这页保留高级前端展示层，同时预留在线推理容器。后续要挂真实推理服务，只需要给前端一个可访问的 URL。"
       />
 
-      <div className="app-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="app-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard label="前端技术栈" value="Next.js 16" hint="App Router + Server Components" compact />
         <MetricCard label="UI 技术" value="React 19" hint="Tailwind CSS 4 + next-themes" compact />
         <MetricCard label="演示容器" value={demoUrl ? "已接入" : "待接入"} hint="支持 iframe 嵌入在线推理页" compact />
         <MetricCard label="本机状态" value={runtimeLevel} hint={runtimeHint} compact />
+        <MetricCard label="最终模型" value="SegFormer-B2" hint={FINAL_MODEL_NAME} compact />
+        <MetricCard label="最终成绩" value="mIoU 80.42" hint={FINAL_MODEL_SCORE} compact />
       </div>
 
       <section className="mt-8">
@@ -115,6 +119,11 @@ export default async function DemoPage() {
                 <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
                   <dt className="text-muted-foreground">最佳权重</dt>
                   <dd className="mt-2 break-all font-medium text-foreground">{checkpointLabel}</dd>
+                </div>
+                <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
+                  <dt className="text-muted-foreground">最终模型</dt>
+                  <dd className="mt-2 break-all font-medium text-foreground">{FINAL_MODEL_NAME}</dd>
+                  <div className="mt-2 text-xs text-muted-foreground">SegFormer-B2 · none · all-beta training · slide + TTA</div>
                 </div>
                 <div className="rounded-[1.2rem] border border-border/70 bg-background/78 p-4">
                   <dt className="text-muted-foreground">素材清单</dt>
