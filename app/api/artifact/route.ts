@@ -18,6 +18,30 @@ export async function GET(request: NextRequest) {
     return new Response("missing path", { status: 400 });
   }
 
+  if (/^https?:\/\//i.test(relative)) {
+    try {
+      const upstream = await fetch(relative, { cache: "no-store" });
+      if (!upstream.ok) {
+        return new Response("not found", { status: 404 });
+      }
+
+      const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+      const url = new URL(relative);
+      const filename = path.basename(url.pathname) || "artifact";
+      const download = request.nextUrl.searchParams.get("download");
+
+      return new Response(upstream.body, {
+        headers: {
+          "content-type": contentType,
+          "cache-control": "no-store",
+          ...(download ? { "content-disposition": `attachment; filename="${filename}"` } : {}),
+        },
+      });
+    } catch {
+      return new Response("not found", { status: 404 });
+    }
+  }
+
   let absolute: string | null = null;
 
   if (path.isAbsolute(relative)) {
@@ -44,10 +68,13 @@ export async function GET(request: NextRequest) {
   try {
     const data = await fs.readFile(absolute);
     const ext = path.extname(absolute).toLowerCase();
+    const filename = path.basename(absolute);
+    const download = request.nextUrl.searchParams.get("download");
     return new Response(data, {
       headers: {
         "content-type": MIME_TYPES[ext] ?? "application/octet-stream",
         "cache-control": "no-store",
+        ...(download ? { "content-disposition": `attachment; filename="${filename}"` } : {}),
       },
     });
   } catch {
