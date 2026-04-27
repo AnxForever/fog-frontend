@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Bot, Cpu, Globe, Layers3, MonitorSmartphone, ServerCog, WandSparkles } from "lucide-react";
+import { ArrowUpRight, Globe, Layers3, MonitorSmartphone, ServerCog, WandSparkles } from "lucide-react";
 import { DemoWorkbench } from "@/components/demo-workbench";
 import { MetricCard } from "@/components/ui/metric-card";
 import { VisualSampleCard } from "@/components/visual-sample-card";
@@ -12,25 +12,28 @@ export const dynamic = "force-dynamic";
 
 const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL;
 
-const demoSteps = [
-  {
-    title: "输入雾天道路图像",
-    description: "答辩时可以导入数据集外的真实雾天道路图，避免只展示训练集内样本。",
-  },
-  {
-    title: "切换预处理方式",
-    description: "展示 none / CLAHE / Gamma / Retinex 的差异，再比较它们对分割结果的影响。",
-  },
-  {
-    title: "输出分割与 overlay",
-    description: "同时呈现原图、预处理图、语义分割图和叠加效果，更适合现场讲述效果差异。",
-  },
-];
-
 const presentationPriorities = [
   "先跑纯展示模式，确保答辩一定能讲。",
   "如果她的 3050 本机环境顺利，再补本地单图推理模式。",
   "不要把答辩成败压在现场临时装 CUDA / mmseg 上。",
+];
+
+const supportNotes = [
+  {
+    icon: Layers3,
+    title: "为什么不用 Gradio 做主展示层",
+    description: "Gradio 适合快速起 demo，但不适合承载完整的毕设叙事、实验组织和结果归档。",
+  },
+  {
+    icon: ServerCog,
+    title: "当前后端接入方式",
+    description: "真实推理已经由 Python 服务承接，前端只负责输入、状态和结果展示，结构更稳。",
+  },
+  {
+    icon: WandSparkles,
+    title: "这套页面的定位",
+    description: "它不是训练脚本替身，而是你的研究结果前台，重点是讲清实验、样本和效果。",
+  },
 ];
 
 function displayRuntimePath(value: string | null, repoRoot: string) {
@@ -167,8 +170,8 @@ export default async function DemoPage() {
         </div>
       </section>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <section className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
+      {demoUrl ? (
+        <section className="mt-8 thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
@@ -176,114 +179,50 @@ export default async function DemoPage() {
               </div>
               <div>
                 <h2 className="font-display-soft text-[1.25rem] font-semibold text-foreground">在线展示窗口</h2>
-                <p className="text-sm text-muted-foreground">如果已经部署推理页，可以直接内嵌到这里。</p>
+                <p className="text-sm text-muted-foreground">只有接入外部推理页时，这里才展开完整嵌入窗口。</p>
               </div>
             </div>
-            {demoUrl ? (
-              <Link
-                href={demoUrl}
-                target="_blank"
-                className="inline-flex items-center gap-2 rounded-2xl border border-border/80 bg-background/88 px-4 py-2 text-sm text-foreground transition-colors hover:bg-muted/60"
-              >
-                新窗口打开
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            ) : null}
+            <Link
+              href={demoUrl}
+              target="_blank"
+              className="inline-flex items-center gap-2 rounded-2xl border border-border/80 bg-background/88 px-4 py-2 text-sm text-foreground transition-colors hover:bg-muted/60"
+            >
+              新窗口打开
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
-
-          {demoUrl ? (
-            <div className="overflow-hidden rounded-[1.5rem] border border-border/80 bg-background/80">
-              <iframe src={demoUrl} title="Fog segmentation demo" className="h-[720px] w-full bg-background" />
-            </div>
-          ) : (
-            <div className="rounded-[1.6rem] border border-dashed border-border/80 bg-background/84 p-6">
-              <div className="flex items-center gap-3 text-foreground">
-                <Globe className="h-4 w-4" />
-                <span className="font-medium">当前还没有配置 `NEXT_PUBLIC_DEMO_URL`。</span>
-              </div>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                这不影响展示站本身。等你把在线推理服务部署出来后，只要给前端一个 URL，这里就能直接嵌进去，不需要改页面结构。
-              </p>
-              <div className="thesis-code mt-4 rounded-[1.25rem]">
-                <div>NEXT_PUBLIC_DEMO_URL=http://127.0.0.1:7860</div>
-                <div>npm run dev</div>
-              </div>
-            </div>
-          )}
+          <div className="overflow-hidden rounded-[1.5rem] border border-border/80 bg-background/80">
+            <iframe src={demoUrl} title="Fog segmentation demo" className="h-[720px] w-full bg-background" />
+          </div>
         </section>
-
-        <section className="grid gap-4">
-          <article className="thesis-surface rounded-[1.8rem] p-5">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
-              <Layers3 className="h-4 w-4 text-foreground/84" />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">为什么不用 Gradio 做主展示层</h3>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              Gradio 更适合快速起一个机器学习 demo，但不适合承载完整的毕设展示、实验组织和论文素材结构。我这里把它降成可选的推理后端入口，主展示层改成更成熟的 Next.js 前端。
-            </p>
-          </article>
-
-          <article className="thesis-surface rounded-[1.8rem] p-5">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
-              <ServerCog className="h-4 w-4 text-foreground/84" />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">后续接真实推理的方式</h3>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              最稳的方式是保留 Python 侧推理服务，前端只做输入、状态和结果展示。这样模型更新不会影响站点结构，答辩时也更稳定。
-            </p>
-          </article>
-
-          <article className="thesis-surface rounded-[1.8rem] p-5">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
-              <Bot className="h-4 w-4 text-foreground/84" />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">现有后端可直接接入</h3>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              你仓库里已经有 `src/demo/gradio_app.py` 和 `scripts/infer_demo.py`。后面要真跑演示，可以直接把它起到 7860 端口，再由这个页面内嵌或跳转。
-            </p>
-            <div className="thesis-code mt-4 rounded-[1.25rem]">
-              <div>python scripts/infer_demo.py \
-</div>
-              <div>  --config configs/experiments/segformer_b2_full.py \
-</div>
-              <div>  --checkpoint work_dirs/xxx/best_mIoU_iter_xxx.pth</div>
-            </div>
-          </article>
-
-          <article className="thesis-surface rounded-[1.8rem] p-5">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
-              <Cpu className="h-4 w-4 text-foreground/84" />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">建议的答辩演示流程</h3>
-            <div className="mt-3 space-y-3">
-              {demoSteps.map((step, index) => (
-                <div key={step.title} className="rounded-[1.2rem] border border-border/70 bg-background/86 p-3">
-                  <div className="text-sm font-semibold text-foreground">
-                    {index + 1}. {step.title}
-                  </div>
-                  <p className="mt-1 text-sm leading-7 text-muted-foreground">{step.description}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-        </section>
-      </div>
-
-      <section className="mt-8">
-        <div className="thesis-shell fog-grid rounded-[2rem] p-5 md:p-6">
-          <div className="mb-5 flex items-center gap-3">
+      ) : (
+        <section className="mt-8 thesis-surface rounded-[1.8rem] p-5">
+          <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
-              <WandSparkles className="h-4 w-4 text-foreground/84" />
+              <Globe className="h-4 w-4 text-foreground/84" />
             </div>
             <div>
-              <h2 className="font-display-soft text-[1.25rem] font-semibold text-foreground">这套展示站的定位</h2>
-              <p className="text-sm text-muted-foreground">不是训练脚本替身，而是你的研究结果前台。</p>
+              <h2 className="text-base font-semibold text-foreground">当前直接使用站内推理工作台</h2>
+              <p className="mt-1 text-sm leading-7 text-muted-foreground">外部 iframe 没配时，不再保留大面积占位区，页面重点放在上传、推理和结果展示。</p>
             </div>
           </div>
-          <p className="max-w-4xl text-sm leading-8 text-muted-foreground">
-            现在这套网页已经能承担项目概览、实验状态、结果表和可视化素材展示。后续如果你要把真实的在线推理功能补进来，
-            我建议把 Python 推理服务挂到单独端口，再由这个 Next.js 前端通过 iframe 或 API 调用承接交互层。这样兼顾好看、稳定和答辩可控性。
-          </p>
+        </section>
+      )}
+
+      <section className="mt-8">
+        <div className="grid gap-4 xl:grid-cols-3">
+          {supportNotes.map((note) => {
+            const Icon = note.icon;
+            return (
+              <article key={note.title} className="thesis-surface rounded-[1.8rem] p-5">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55">
+                  <Icon className="h-4 w-4 text-foreground/84" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground">{note.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">{note.description}</p>
+              </article>
+            );
+          })}
         </div>
       </section>
     </div>
