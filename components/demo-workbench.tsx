@@ -246,33 +246,33 @@ export function DemoWorkbench({
       {activePreview ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/82 px-4 py-4 backdrop-blur-sm md:py-6">
           <button type="button" className="absolute inset-0" onClick={() => setActivePreview(null)} aria-label="关闭预览" />
-          <div className="relative z-[101] flex max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-slate-950/92 p-4 shadow-2xl md:max-h-[calc(100vh-3rem)]">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div className="text-sm font-medium text-white">{activePreview.label}</div>
-              <div className="flex items-center gap-2">
-                <a
-                  href={`${activePreview.src}${activePreview.src.includes("?") ? "&" : "?"}download=1`}
-                  download
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-white/6 px-4 text-sm text-white transition-colors hover:bg-white/12"
-                >
-                  <Download className="h-4 w-4" />
-                  下载
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setActivePreview(null)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition-colors hover:bg-white/12"
-                  aria-label="关闭预览"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            <div className="flex min-h-0 items-center justify-center overflow-hidden rounded-[1.3rem] border border-white/10 bg-black/18">
+          <div className="absolute left-4 top-4 z-[102] rounded-full border border-white/12 bg-slate-950/72 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur md:left-6 md:top-6">
+            {activePreview.label}
+          </div>
+          <div className="absolute right-4 top-4 z-[102] flex items-center gap-2 md:right-6 md:top-6">
+            <a
+              href={`${activePreview.src}${activePreview.src.includes("?") ? "&" : "?"}download=1`}
+              download
+              className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-slate-950/72 px-4 text-sm text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
+            >
+              <Download className="h-4 w-4" />
+              下载
+            </a>
+            <button
+              type="button"
+              onClick={() => setActivePreview(null)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-slate-950/72 text-white shadow-lg transition-colors hover:bg-white/12 backdrop-blur"
+              aria-label="关闭预览"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="relative z-[101] flex h-full w-full items-center justify-center">
+            <div className="flex items-center justify-center overflow-hidden">
               <img
                 src={activePreview.src}
                 alt={activePreview.label}
-                className="h-auto max-h-[calc(100vh-9rem)] w-auto max-w-full object-contain md:max-h-[calc(100vh-10rem)]"
+                className="h-auto max-h-[calc(100vh-6rem)] w-auto max-w-[calc(100vw-2rem)] rounded-[1.3rem] border border-white/10 bg-black/18 object-contain shadow-2xl md:max-h-[calc(100vh-7rem)] md:max-w-[calc(100vw-4rem)]"
               />
             </div>
           </div>
